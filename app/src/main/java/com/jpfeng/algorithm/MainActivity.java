@@ -20,10 +20,32 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    // -- 交换
+    // 冒泡✔
+    // 奇偶✔
+    // 快速✔
+    // 随机快速
+
+    // -- 选择
+    // 选择✔
+    // 堆排序
+
+    // -- 插入
+    // 插入✔
+
+    // -- 归并
+    // 归并1
+
+    // -- 分布
+    // 计数1
+    // 基数
+
     private LinearLayout llVisual;
     private List<Command> bubbleSort;
     private List<Command> oddSort;
     private List<Command> quickSort;
+    private List<Command> selSort;
+    private List<Command> insSort;
     private View ivRange;
 
     @Override
@@ -39,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tv_sort_bubble).setOnClickListener(v -> resetAndPlay(arr, bubbleSort));
         findViewById(R.id.tv_sort_odd).setOnClickListener(v -> resetAndPlay(arr, oddSort));
         findViewById(R.id.tv_sort_quick).setOnClickListener(v -> resetAndPlay(arr, quickSort));
+        findViewById(R.id.tv_sort_sel).setOnClickListener(v -> resetAndPlay(arr, selSort));
+        findViewById(R.id.tv_sort_ins).setOnClickListener(v -> resetAndPlay(arr, insSort));
 
         llVisual.post(() -> {
             int height = llVisual.getHeight();
@@ -67,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
 
         quickSort = new ArrayList<>();
         qSort(Arrays.copyOf(arr, arr.length), 0, arr.length - 1);
+
+        selSort = new ArrayList<>();
+        selectionSort(Arrays.copyOf(arr, arr.length));
+
+        insSort = new ArrayList<>();
+        insertionSort(Arrays.copyOf(arr, arr.length));
     }
 
     private void resetAndPlay(int[] arr, List<Command> commandList) {
@@ -204,6 +234,92 @@ public class MainActivity extends AppCompatActivity {
         }
         qSort(arr, head, i - 1);
         qSort(arr, i, tail);
+    }
+
+    private void selectionSort(int[] arr) {
+        int min, temp;
+        for (int i = 0; i < arr.length; i++) {
+            // 初始化未排序序列中最小数据数组下标
+            min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                // 在未排序元素中继续寻找最小元素，并保存其下标
+                selSort.add(new Range(j, j));
+                if (arr[j] < arr[min]) {
+                    min = j;
+                }
+            }
+            // 将未排序列中最小元素放到已排序列末尾
+            if (min != i) {
+                temp = arr[min];
+                arr[min] = arr[i];
+                arr[i] = temp;
+                selSort.add(new Swap(i, min));
+            }
+        }
+    }
+
+    public void insertionSort(int[] array) {
+        for (int i = 1; i < array.length; i++) {
+            int key = array[i];
+            int j = i - 1;
+            while (j >= 0 && array[j] > key) {
+                insSort.add(new Range(j, j + 1));
+                array[j + 1] = array[j];
+                insSort.add(new Swap(j, j + 1));
+                j--;
+            }
+            array[j + 1] = key;
+        }
+    }
+
+    public static void mergeSort(int[] arr) {
+        int[] orderedArr = new int[arr.length];
+        for (int i = 2; i < arr.length * 2; i *= 2) {
+            for (int j = 0; j < (arr.length + i - 1) / i; j++) {
+                int left = i * j;
+                int mid = left + i / 2 >= arr.length ? (arr.length - 1) : (left + i / 2);
+                int right = i * (j + 1) - 1 >= arr.length ? (arr.length - 1) : (i * (j + 1) - 1);
+                int start = left, l = left, m = mid;
+                while (l < mid && m <= right) {
+                    if (arr[l] < arr[m]) {
+                        orderedArr[start++] = arr[l++];
+                    } else {
+                        orderedArr[start++] = arr[m++];
+                    }
+                }
+                while (l < mid)
+                    orderedArr[start++] = arr[l++];
+                while (m <= right)
+                    orderedArr[start++] = arr[m++];
+                System.arraycopy(orderedArr, left, arr, left, right - left + 1);
+            }
+        }
+    }
+
+    private void countSort(int[] a) {
+        int b[] = new int[a.length];
+        int max = a[0], min = a[0];
+        for (int i : a) {
+            if (i > max) {
+                max = i;
+            }
+            if (i < min) {
+                min = i;
+            }
+        }
+        //这里k的大小是要排序的数组中，元素大小的极值差+1
+        int k = max - min + 1;
+        int c[] = new int[k];
+        for (int i = 0; i < a.length; ++i) {
+            c[a[i] - min] += 1;//优化过的地方，减小了数组c的大小
+        }
+        for (int i = 1; i < c.length; ++i) {
+            c[i] = c[i] + c[i - 1];
+        }
+        for (int i = a.length - 1; i >= 0; --i) {
+            b[--c[a[i] - min]] = a[i];//按存取的方式取出c的元素
+        }
+        System.arraycopy(b, 0, a, 0, a.length);
     }
 
     private abstract class Command {

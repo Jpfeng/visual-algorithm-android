@@ -19,8 +19,9 @@
         android:layout_marginTop="16dp"
         android:orientation="horizontal" />
 
-    <LinearLayout
+    <GridLayout
         android:layout_width="match_parent"
+        android:columnCount="6"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:gravity="center"
@@ -51,5 +52,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="快速!" />
-    </LinearLayout>
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <Button
+            android:id="@+id/tv_sort_sel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择!" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <Button
+            android:id="@+id/tv_sort_ins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="插入!" />
+    </GridLayout>
 </FrameLayout>
